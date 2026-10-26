@@ -1,0 +1,83 @@
+name: BotArmor audit
+description: Crash-test your chatbot or AI agent with BotArmor and fail the job on a low score or a serious finding.
+author: BotArmor AI
+branding:
+  icon: shield
+  color: green
+
+inputs:
+  api-key:
+    description: BotArmor API key (ba_live_...). Pass it from secrets, never in clear.
+    required: true
+  target-url:
+    description: Public https URL of the deployed agent (e.g. staging). Leave empty for a prompt-only audit.
+    required: false
+    default: ""
+  target-type:
+    description: "openai-compatible, webhook (default when target-url is set) or prompt (default without target-url)."
+    required: false
+    default: ""
+  target-headers:
+    description: 'Headers the target needs, as JSON ({"Authorization": "Bearer ..."}) or one "Name: value" per line. Use secrets. A credential header is stored encrypted by BotArmor.'
+    required: false
+    default: ""
+  target-model:
+    description: Model name sent in the body of an openai-compatible target.
+    required: false
+    default: ""
+  system-prompt-file:
+    description: Path to the agent's system prompt in the repository. It is the rulebook the judge checks answers against, and the prompt BotArmor plays in prompt mode.
+    required: false
+    default: ""
+  system-prompt:
+    description: The system prompt as text, if not in a file.
+    required: false
+    default: ""
+  levels:
+    description: Comma-separated subset of levels (logic, toxic, hacker, lawyer, multilang, loop, roleplay, phishing, ethics, burst, disclosure, facts, agency). Default all.
+    required: false
+    default: ""
+  min-score:
+    description: Fail when the overall score (0-100) is below this.
+    required: false
+    default: "0"
+  fail-on:
+    description: "Fail when a level breaks at this severity or worse: critical, high, any, or none."
+    required: false
+    default: high
+  authorization-confirmed:
+    description: '"true" confirms you own the target bot or hold the owner''s written permission. Required for a live audit.'
+    required: false
+    default: "false"
+  name:
+    description: Name shown in the report.
+    required: false
+    default: ""
+  lang:
+    description: Report language (fr, en, de, es, ru).
+    required: false
+    default: en
+  timeout-minutes:
+    description: How long to wait for the audit.
+    required: false
+    default: "40"
+  api-url:
+    description: BotArmor API base URL.
+    required: false
+    default: https://app.botarmor.eu/api/v1
+
+outputs:
+  score:
+    description: Overall score 0-100.
+  grade:
+    description: Grade A-F.
+  audit-id:
+    description: Audit id (BA-XXXXXXXX).
+  report-url:
+    description: Public verification page of the signed report.
+  passed:
+    description: '"true" when the gate passed.'
+
+runs:
+  using: node20
+  main: index.mjs
